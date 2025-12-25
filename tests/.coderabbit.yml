@@ -1,0 +1,60 @@
+version: 1
+
+# Rules for OPA / Rego
+rego:
+  enabled: true
+  lint:
+    # Use builtin Coderabbit + Rego recommendations
+    enabled: true
+    rules:
+      - id: no_wildcard_paths
+        description: "Disallow wildcard paths unless exception exists"
+        severity: high
+      - id: exception_reason_required
+        description: "Every exception must include a reason"
+        severity: high
+      - id: terraform_safe_access
+        description: "Terraform plans must not create/update forbidden Vault resources"
+        severity: medium
+      - id: no_empty_policies
+        description: "Policy rules must not be empty"
+        severity: medium
+      - id: policy_naming_convention
+        description: "Policies must follow kebab-case naming"
+        severity: low
+
+  test:
+    enabled: true
+    rules:
+      - id: exceptions_test
+        description: "Exceptions logic must pass test cases"
+        severity: high
+      - id: terraform_test
+        description: "Terraform helpers must pass tests"
+        severity: high
+
+# Coverage enforcement
+coverage:
+  enabled: true
+  min_percentage: 80
+
+# CI integration
+ci:
+  fail_on_error: true
+  fail_on_warning: false
+  output_format: json
+  report_path: reports/coderabbit.json
+
+# Include paths
+include:
+  - policies/**
+  - vendor/opa-common/policies/**
+
+# Exclude paths
+exclude:
+  - tests/** 
+  - bundles/**
+
+# Optional: auto-fix suggestions
+auto_fix:
+  enabled: true
